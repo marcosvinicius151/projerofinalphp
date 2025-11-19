@@ -5,7 +5,7 @@ Um sistema simples e funcional para academias gerenciarem alunos, treinos e pres
 
 ## Integrantes
 
-Marcos Vinicius Rodrigues Oliveira, Lucas Henrique da Silva Freire, Juan Peixoto de Oliveira e Denis Andrade
+Marcos Vinicius Rodrigues Oliveira, Lucas Henrique da Silva Freire, Juan Peixoto de Oliveira
 
 
 ## Rodando localmente
