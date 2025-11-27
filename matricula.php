@@ -1,16 +1,48 @@
+<?php
+$conexao = new mysqli("localhost", "root", "", "academia");
+$conexao->set_charset("utf8");
+
+if (isset($_POST['matricular'])) {
+
+    $nome     = $_POST['nome'];
+    $cpf      = $_POST['cpf'];
+    $telefone = $_POST['telefone'];
+    $email    = $_POST['email'];
+    $idade    = $_POST['idade'];
+    $plano    = $_POST['plano'];
+
+    $sql = $conexao->prepare("
+        INSERT INTO alunos (cpf, nome, plano, idade, email, telefone)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+
+    $sql->bind_param("ssssss", $cpf, $nome, $plano, $idade, $email, $telefone);
+
+    if ($sql->execute()) {
+        echo "<script>alert('Matrícula realizada com sucesso!');</script>";
+    } else {
+        if ($sql->errno == 1062) {
+            echo "<script>alert('Este CPF já foi cadastrado!');</script>";
+        } else {
+            echo "<script>alert('Erro ao matricular: " . $sql->error . "');</script>";
+        }
+    }
+
+    $sql->close();
+}
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrícula - Titanium Fitness</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Teko:wght@700&display=swap" rel="stylesheet">
-    
+
     <style>
-       
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -21,17 +53,16 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px; 
+            padding: 40px 20px;
         }
 
         .page-container {
             width: 100%;
-            max-width: 800px; 
+            max-width: 800px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-
 
         .brand-header {
             font-family: 'Teko', sans-serif;
@@ -60,7 +91,6 @@
             text-align: center;
         }
 
-      
         .form-box {
             background-color: #1a1a1a;
             padding: 50px;
@@ -70,7 +100,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
         }
 
-        
         .input-group {
             margin-bottom: 25px;
             text-align: left;
@@ -105,18 +134,12 @@
             box-shadow: 0 0 10px rgba(214, 0, 0, 0.3);
         }
 
-        
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
         }
 
-        .full-width {
-            width: 100%;
-        }
-
-        
         select.form-control {
             appearance: none;
             cursor: pointer;
@@ -126,7 +149,6 @@
             background-size: 10px;
         }
 
-        
         .btn-submit {
             width: 100%;
             margin-top: 15px;
@@ -148,11 +170,9 @@
             transform: scale(1.02);
         }
 
-        
         @media (max-width: 600px) {
             .form-box { padding: 30px 20px; }
             .main-title { font-size: 3rem; }
-            
             .form-row { grid-template-columns: 1fr; gap: 0; }
         }
     </style>
@@ -166,74 +186,49 @@
         <p class="subtitle">Preencha seus dados para começar a treinar.</p>
 
         <main class="form-box">
-            <form action="#" method="POST">
-                
+            <form action="" method="POST">
+
                 <div class="input-group full-width">
                     <label for="nome">Nome Completo</label>
-                    <input type="text" id="nome" class="form-control" placeholder="Digite seu nome" required
-                        oninvalid="this.setCustomValidity('Preencha seu nome completo.')"
-                        oninput="this.setCustomValidity('')">
+                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Digite seu nome" required>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group">
                         <label for="cpf">CPF</label>
-                        <input type="text" id="cpf" class="form-control" placeholder="Digite seu cpf" maxlength="11" required
-                            onkeyup="mascaraCPF(this)"
-                            oninvalid="this.setCustomValidity('O CPF é obrigatório.')"
-                            oninput="this.setCustomValidity('')">
+                        <input type="text" id="cpf" name="cpf" class="form-control" placeholder="Digite seu CPF" maxlength="11" required>
                     </div>
                     <div class="input-group">
                         <label for="telefone">Telefone / WhatsApp</label>
-                        <input type="tel" id="telefone" class="form-control" placeholder="(00) 00000-0000" required
-                            onkeyup="mascaraTelefone(this)"
-                            oninvalid="this.setCustomValidity('Digite seu telefone.')"
-                            oninput="this.setCustomValidity('')">
+                        <input type="tel" id="telefone" name="telefone" class="form-control" placeholder="(00) 00000-0000" required>
                     </div>
                 </div>
 
                 <div class="input-group full-width">
                     <label for="email">E-mail</label>
-                    <input type="email" id="email" class="form-control" placeholder="seu@email.com" required
-                        oninvalid="this.setCustomValidity('Digite um e-mail válido.')"
-                        oninput="this.setCustomValidity('')">
+                    <input type="email" id="email" name="email" class="form-control" placeholder="seu@email.com" required>
                 </div>
 
                 <div class="form-row">
                     <div class="input-group">
                         <label for="idade">Idade</label>
-                        <input type="number" id="idade" class="form-control" placeholder="Anos" required min="14"
-                            oninvalid="this.setCustomValidity('Informe sua idade.')"
-                            oninput="this.setCustomValidity('')">
+                        <input type="number" id="idade" name="idade" class="form-control" placeholder="Anos" required min="14">
                     </div>
                     <div class="input-group">
                         <label for="plano">Escolha o Plano</label>
-                        <select id="plano" class="form-control" required
-                            oninvalid="this.setCustomValidity('Selecione um plano.')"
-                            oninput="this.setCustomValidity('')">
+                        <select id="plano" name="plano" class="form-control" required>
                             <option value="" disabled selected>Selecione...</option>
-                            <option value="silver">Plano Silver</option>
-                            <option value="gold">Plano Gold (Recomendado)</option>
-                            <option value="titanium">Plano Titanium</option>
+                            <option value="Silver">Plano Silver</option>
+                            <option value="Gold">Plano Gold (Recomendado)</option>
+                            <option value="Titanium">Plano Titanium</option>
                         </select>
                     </div>
                 </div>
 
-                <button type="submit" class="btn-submit">CONFIRMAR MATRÍCULA</button>
+                <button type="submit" name="matricular" class="btn-submit">CONFIRMAR MATRÍCULA</button>
             </form>
         </main>
     </div>
-
-    <script>
-
-        function mascaraTelefone(i){
-            var v = i.value;
-            v = v.replace(/\D/g,"");
-            v = v.replace(/^(\d{2})(\d)/g,"($1) $2");
-            v = v.replace(/(\d)(\d{4})$/,"$1-$2");
-            i.value = v;
-        }
-    </script>
 
 </body>
 </html>
